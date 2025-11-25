@@ -3,13 +3,13 @@
 
 set -o errexit
 
-echo "Installing Composer dependencies..."
+echo "Installing root Composer dependencies..."
 composer install --no-dev --optimize-autoloader
 
-echo "Copying vendor to app directory..."
-if [ -d vendor ] && [ ! -d app/vendor ]; then
-    cp -r vendor app/vendor
-fi
+echo "Installing app Composer dependencies..."
+cd app
+composer install --no-dev --optimize-autoloader
+cd ..
 
 echo "Creating runtime directories..."
 mkdir -p runtime/session

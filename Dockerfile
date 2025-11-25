@@ -27,17 +27,17 @@ WORKDIR /var/www/html
 
 # Copy composer files first for better caching
 COPY composer.json composer.lock* ./
+COPY app/composer.json ./app/
 
-# Install PHP dependencies
+# Install PHP dependencies in root (for any root-level dependencies)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Copy app files
+# Copy all application files
 COPY . /var/www/html/
 
-# Create symlink or copy vendor to app directory
-RUN if [ -d vendor ] && [ ! -d app/vendor ]; then \
-        cp -r vendor app/vendor; \
-    fi
+# Install composer dependencies in app directory (where they're actually used)
+RUN cd /var/www/html/app && \
+    composer install --no-dev --optimize-autoloader --no-interaction
 
 # Create necessary directories and fix permissions
 RUN mkdir -p runtime/session \
