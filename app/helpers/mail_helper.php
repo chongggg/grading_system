@@ -11,14 +11,28 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
     $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
     try {
-        // SMTP config - Try port 587 with STARTTLS (more likely to work on hosting providers)
-        $mail->isSMTP();
-        $mail->Host       = 'smtp.gmail.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'chongmiranda21@gmail.com';
-        $mail->Password   = 'ylhe ufic nuff vmtw';
-        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = 587;
+        // Check if SendGrid API key is available (works on all hosting providers)
+        $sendgrid_api_key = getenv('SENDGRID_API_KEY') ?: (isset($GLOBALS['sendgrid_api_key']) ? $GLOBALS['sendgrid_api_key'] : null);
+        
+        if ($sendgrid_api_key) {
+            // SendGrid SMTP Relay (no port blocking issues)
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.sendgrid.net';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'apikey';
+            $mail->Password   = $sendgrid_api_key;
+            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+        } else {
+            // Fallback to Gmail SMTP (may be blocked on some hosts)
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'chongmiranda21@gmail.com';
+            $mail->Password   = 'ylhe ufic nuff vmtw';
+            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = 587;
+        }
         
         // Timeout settings for slow networks
         $mail->Timeout    = 30;
@@ -31,8 +45,9 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
         };
 
         // From and To
-        $mail->setFrom('chongmiranda21@gmail.com', 'System Admin'); // sender
-        $mail->addAddress($email, $name); // receiver = user input
+        $from_email = $sendgrid_api_key ? 'noreply@gradingmanagement.com' : 'chongmiranda21@gmail.com';
+        $mail->setFrom($from_email, 'Grading Management System');
+        $mail->addAddress($email, $name);
 
         // Attachment (optional)
         if ($attachmentPath && file_exists($attachmentPath)) {
