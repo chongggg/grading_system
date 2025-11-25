@@ -15,10 +15,16 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'chongmiranda21@gmail.com'; // your Gmail
-        $mail->Password   = 'ylhe ufic nuff vmtw'; // your App Password
+        $mail->Username   = 'chongmiranda21@gmail.com';
+        $mail->Password   = 'ylhe ufic nuff vmtw';
         $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port       = 465;
+        
+        // Enable verbose debug output for troubleshooting
+        $mail->SMTPDebug  = 0; // 0 = off, 2 = client and server messages
+        $mail->Debugoutput = function($str, $level) {
+            error_log("PHPMailer: $str");
+        };
 
         // From and To
         $mail->setFrom('chongmiranda21@gmail.com', 'System Admin'); // sender
@@ -38,6 +44,9 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
         $mail->send();
         return true;
     } catch (\Exception $e) {
+        // Log the error for debugging
+        error_log("Mail Helper Error: " . $e->getMessage());
+        error_log("PHPMailer ErrorInfo: " . $mail->ErrorInfo);
         return "Mailer Error: {$mail->ErrorInfo}";
     }
 }
