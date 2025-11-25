@@ -89,24 +89,26 @@ class Session {
 	    	$this->config['cookie_name'] = $this->config['sess_cookie_name'] ? $this->config['sess_cookie_name'] : NULL;
 	    }
 
-		//Set up cookie name
-	    if (empty($this->config['cookie_name']))
-		{
-	    	$this->config['cookie_name'] = ini_get('session.name');
-	    } else {
-	    	ini_set('session.name', $this->config['cookie_name']);
-	    }
+	//Set up cookie name
+    if (empty($this->config['cookie_name']))
+	{
+    	$this->config['cookie_name'] = ini_get('session.name');
+    } else {
+    	if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    		ini_set('session.name', $this->config['cookie_name']);
+    	}
+    }
 
-		//Set up session expiration
-	    if (empty($this->config['sess_expiration']))
-		{
-	    	$this->config['sess_expiration'] = (int) ini_get('session.gc_maxlifetime');
-	    } else {
-	    	$this->config['sess_expiration'] = (int) $this->config['sess_expiration'];
-	    	ini_set('session.gc_maxlifetime', $this->config['sess_expiration']);
-	    }
-
-	    if (isset($this->config['cookie_expiration']))
+	//Set up session expiration
+    if (empty($this->config['sess_expiration']))
+	{
+    	$this->config['sess_expiration'] = (int) ini_get('session.gc_maxlifetime');
+    } else {
+    	$this->config['sess_expiration'] = (int) $this->config['sess_expiration'];
+    	if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    		ini_set('session.gc_maxlifetime', $this->config['sess_expiration']);
+    	}
+    }	    if (isset($this->config['cookie_expiration']))
 		{
 	    	$this->config['cookie_expiration'] = (int) $this->config['cookie_expiration'];
 		} else {
@@ -118,16 +120,18 @@ class Session {
 			'domain'   => $this->config['cookie_domain'],
 			'secure'   => $this->config['cookie_secure'],
 			'httponly' => TRUE,
-			'samesite' => $this->config['cookie_samesite']
-		));
+		'samesite' => $this->config['cookie_samesite']
+	));
 
+	if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
 	    ini_set('session.use_trans_sid', 0);
 	    ini_set('session.use_strict_mode', 1);
 	    ini_set('session.use_cookies', 1);
 	    ini_set('session.use_only_cookies', 1);
 	    ini_set('session.sid_length', $this->_get_sid_length());
+	}
 
-	    if ( ! empty($this->config['sess_driver']) AND $this->config['sess_driver'] == 'file' ) {
+    if ( ! empty($this->config['sess_driver']) AND $this->config['sess_driver'] == 'file' ) {
 			require_once 'Session/FileSessionHandler.php';
 			$handler = new FileSessionHandler();
 			session_set_save_handler($handler, TRUE);
