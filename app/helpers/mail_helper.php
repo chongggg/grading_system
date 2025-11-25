@@ -17,7 +17,7 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
         $mail->SMTPAuth   = true;
         $mail->Username   = 'chongmiranda21@gmail.com'; // your Gmail
         $mail->Password   = 'ylhe ufic nuff vmtw'; // your App Password
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
         $mail->Port       = 465;
 
         // From and To
