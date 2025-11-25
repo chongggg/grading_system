@@ -47,6 +47,15 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
         // Log the error for debugging
         error_log("Mail Helper Error: " . $e->getMessage());
         error_log("PHPMailer ErrorInfo: " . $mail->ErrorInfo);
+        
+        // On production with network restrictions, return true to allow registration to continue
+        // The admin will need to manually approve users
+        if (strpos($e->getMessage(), 'Network is unreachable') !== false || 
+            strpos($e->getMessage(), 'Could not connect to SMTP') !== false) {
+            error_log("Mail Helper: SMTP blocked by hosting provider. User registration will proceed without email.");
+            return true; // Allow registration to continue
+        }
+        
         return "Mailer Error: {$mail->ErrorInfo}";
     }
 }
