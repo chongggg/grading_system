@@ -1,6 +1,8 @@
 .DS_Store
 
+# Vendor directories (will be built on deploy)
 app/vendor/*
+vendor/*
 
 runtime/*
 !runtime/.htaccess
@@ -19,3 +21,6 @@ runtime/*
 *.sublime-project
 
 .env
+
+# Composer lock file (track it for consistent deployments)
+!composer.lock
