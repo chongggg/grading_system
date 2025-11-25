@@ -11,8 +11,13 @@ use PHPMailer\PHPMailer\Exception;
 function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
 {
     // Ensure Composer autoload is available for PHPMailer classes
-    if (file_exists(APP_DIR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php')) {
-        require_once APP_DIR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+    $autoload_path = APP_DIR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+    if (file_exists($autoload_path)) {
+        require_once $autoload_path;
+    } else {
+        // Log error for debugging
+        error_log("mail_helper: vendor/autoload.php not found at: " . $autoload_path);
+        return "Error: Composer autoload not found. Please ensure vendor packages are installed.";
     }
 
     $mail = new PHPMailer(true);
