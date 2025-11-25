@@ -14,7 +14,9 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
         // Check if SendGrid API key is available (works on all hosting providers)
         $sendgrid_api_key = getenv('SENDGRID_API_KEY') ?: (isset($GLOBALS['sendgrid_api_key']) ? $GLOBALS['sendgrid_api_key'] : null);
         
-        if ($sendgrid_api_key) {
+        // Log which mail service is being used
+        if ($sendgrid_api_key && $sendgrid_api_key !== 'YOUR_SENDGRID_API_KEY_HERE') {
+            error_log("Mail Helper: Using SendGrid SMTP");
             // SendGrid SMTP Relay (no port blocking issues)
             $mail->isSMTP();
             $mail->Host       = 'smtp.sendgrid.net';
@@ -24,6 +26,7 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
             $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
         } else {
+            error_log("Mail Helper: SendGrid not configured, using Gmail SMTP (may be blocked)");
             // Fallback to Gmail SMTP (may be blocked on some hosts)
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
