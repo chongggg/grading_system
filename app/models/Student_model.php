@@ -85,7 +85,13 @@ class Student_model extends Model
      */
     public function get_student($id)
     {
-        return $this->find($id, false); // false = exclude soft-deleted
+        $sql = "SELECT students.*, sections.section_name as section 
+                FROM students 
+                LEFT JOIN sections ON students.section_id = sections.id 
+                WHERE students.id = ? AND students.deleted_at IS NULL";
+        
+        $result = $this->db->raw($sql, [$id]);
+        return $result ? $result->fetch() : null;
     }
 
     /**

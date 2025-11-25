@@ -16,10 +16,18 @@ class Welcome extends Controller
         if ($this->session->userdata('logged_in')) {
             // User is logged in, redirect based on role
             $role = $this->session->userdata('role');
-            if ($role === 'admin') {
-                redirect('students');
-            } else {
-                redirect('auth/profile');
+            switch ($role) {
+                case 'admin':
+                    redirect('admin/');
+                    break;
+                case 'teacher':
+                    redirect('teacher/subjects');
+                    break;
+                case 'student':
+                    redirect('student/dashboard');
+                    break;
+                default:
+                    redirect('auth/profile');
             }
         } else {
             // User is not logged in, redirect to login

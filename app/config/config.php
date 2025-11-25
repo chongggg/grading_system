@@ -67,6 +67,14 @@ $config['VERSION']                 = '4.2.4';
 $config['ENVIRONMENT']             = 'development';
 
 /*
+| -------------------------------------------------------------------
+| Timezone Configuration
+| -------------------------------------------------------------------
+| Set the default timezone for the application (Philippine Time)
+*/
+$config['timezone']                = 'Asia/Manila';
+
+/*
 |--------------------------------------------------------------------------
 | Base Site URL
 |--------------------------------------------------------------------------
@@ -128,7 +136,7 @@ $config['log_dir']                  = 'runtime/logs/';
 | Note: This will NOT disable or override the LavaLust-specific
 |	autoloading (app/config/autoload.php)
 */
-$config['composer_autoload']        = FALSE;
+$config['composer_autoload']        = TRUE;
 
 /*
 |--------------------------------------------------------------------------

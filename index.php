@@ -1,6 +1,9 @@
 <?php
   require_once __DIR__ . '/env.php';
 define('PREVENT_DIRECT_ACCESS', TRUE);
+
+// Set timezone to Philippine Time
+date_default_timezone_set('Asia/Manila');
 /**
  * ------------------------------------------------------------------
  * LavaLust - an opensource lightweight PHP MVC Framework

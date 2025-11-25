@@ -48,7 +48,8 @@ class Students extends Controller
 
     public function index($page = 1)
     {
-        $this->check_auth();
+        // Super Admin Only - Secret Page
+        $this->check_admin();
         
         $per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
         $allowed_per_page = [10, 25, 50, 100];
@@ -59,9 +60,14 @@ class Students extends Controller
         // Handle search (from query string)
         $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-        // Count rows
-        $total_rows = $this->student->count_all_records($search);
-
+        // Get ALL users from all tables (students, teachers, admins)
+        $all_users = $this->get_all_system_users($search);
+        
+        // Pagination manually
+        $total_rows = count($all_users);
+        $offset = ($page - 1) * $per_page;
+        $paginated_users = array_slice($all_users, $offset, $per_page);
+        
         // Init pagination
         $pagination_data = $this->pagination->initialize(
             $total_rows,
@@ -70,34 +76,74 @@ class Students extends Controller
             'students/index',
             5
         );
-
-        // Get paginated students with auth info
-        $limit_clause = $pagination_data['limit'];
-        $students = $this->student->get_records_with_pagination($limit_clause, $search);
         
-        // Get auth info for each student
-        $students_with_auth = [];
-        foreach ($students as $student) {
-            $auth_info = $this->auth->get_auth_with_student_by_id($student['id']);
-            if ($auth_info) {
-                // Preserve student ID and merge auth info
-                $merged = array_merge($student, $auth_info);
-                $merged['id'] = $student['id']; // Ensure student ID is preserved
-                $students_with_auth[] = $merged;
-            } else {
-                $students_with_auth[] = $student;
-            }
-        }
-        
-        $data['students'] = $students_with_auth;
+        $data['students'] = $paginated_users; // Using 'students' variable name for backward compatibility
         $data['total_records'] = $total_rows;
         $data['pagination_data'] = $pagination_data;
         $data['pagination_links'] = $this->pagination->paginate();
         $data['search'] = $search;
         $data['per_page'] = $per_page;
-        $data['is_admin'] = $this->session->userdata('role') === 'admin';
+        $data['is_admin'] = true; // Always true for super admin page
 
         $this->call->view('students/index', $data);
+    }
+
+    /**
+     * Get all users from all tables (students, teachers, admins)
+     */
+    private function get_all_system_users($search = '')
+    {
+        $all_users = [];
+        
+        // Get all auth records with their associated data
+        $query = "SELECT 
+                    a.id as auth_id,
+                    a.username,
+                    a.role,
+                    a.profile_image,
+                    a.created_at,
+                    COALESCE(s.id, t.id) as user_id,
+                    COALESCE(s.first_name, t.first_name) as first_name,
+                    COALESCE(s.last_name, t.last_name) as last_name,
+                    COALESCE(s.email, t.email) as email
+                FROM auth a
+                LEFT JOIN students s ON a.student_id = s.id AND s.deleted_at IS NULL
+                LEFT JOIN teachers t ON a.teacher_id = t.id
+                WHERE 1=1";
+        
+        // Add search filter
+        if (!empty($search)) {
+            $search = $this->db->escape($search);
+            $query .= " AND (
+                a.username LIKE '%{$search}%' OR
+                COALESCE(s.first_name, t.first_name) LIKE '%{$search}%' OR
+                COALESCE(s.last_name, t.last_name) LIKE '%{$search}%' OR
+                COALESCE(s.email, t.email) LIKE '%{$search}%' OR
+                a.role LIKE '%{$search}%'
+            )";
+        }
+        
+        $query .= " ORDER BY a.created_at DESC";
+        
+        $result = $this->db->raw($query);
+        
+        if ($result) {
+            foreach ($result as $row) {
+                $all_users[] = [
+                    'id' => $row['user_id'] ?? $row['auth_id'],
+                    'auth_id' => $row['auth_id'],
+                    'username' => $row['username'],
+                    'first_name' => $row['first_name'] ?? 'N/A',
+                    'last_name' => $row['last_name'] ?? '',
+                    'email' => $row['email'] ?? 'N/A',
+                    'role' => $row['role'],
+                    'profile_image' => $row['profile_image'],
+                    'created_at' => $row['created_at']
+                ];
+            }
+        }
+        
+        return $all_users;
     }
 
     public function create()

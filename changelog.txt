@@ -1,3 +1,56 @@
+Grading Management System - Custom Changelog
+
+#Changelog - November 16, 2025
+
+## Students Module Implementation
+1. **NEW** - Complete Students Portal Module with MVC architecture
+   - Student dashboard with statistics and announcements
+   - Profile management (editable fields + admin-only restrictions)
+   - Grades viewing (only status='Reviewed' grades)
+   - PDF grade report generation using TCPDF
+   - Notifications system with real-time badge
+   - Chatbot help desk with Q&A responses
+   
+2. **NEW Controllers**
+   - app/controllers/Student.php - Main student portal controller (8 methods)
+   
+3. **NEW Models**
+   - app/models/Grade_model.php - Grade data management
+   - app/models/Notification_model.php - Notification handling
+   
+4. **NEW Views**
+   - app/views/student/_header.php - Header with notification bell
+   - app/views/student/_footer.php - Footer with chatbot integration
+   - app/views/student/dashboard.php - Student dashboard
+   - app/views/student/profile.php - Profile edit form
+   - app/views/student/grades.php - Grades display with statistics
+   
+5. **Routes Added**
+   - student/dashboard, student/profile, student/grades
+   - student/download_pdf, student/notifications
+   - student/mark_notification_read, student/mark_all_read
+   
+6. **Dependencies**
+   - Added TCPDF library to composer.json for PDF generation
+   
+7. **Features**
+   - jQuery animations throughout (ripple, fade, slide, pulse, shake)
+   - AJAX-powered notifications with real-time updates
+   - Session-based authentication and authorization
+   - Database-driven with QueryBuilder (status='Reviewed' filtering)
+   - Responsive design matching admin/teacher themes
+   
+8. **Security**
+   - Role-based access control (role='student' required)
+   - Input validation and sanitization
+   - SQL injection prevention via QueryBuilder
+   - XSS protection with htmlspecialchars
+   - Admin-only fields (grade_level, section) properly disabled
+   
+9. **Documentation**
+   - STUDENTS_MODULE_SETUP.md - Complete installation guide
+   - STUDENTS_MODULE_COMPLETE.md - Implementation summary
+
 LavaLust 4.2.5
 
 #Changelog

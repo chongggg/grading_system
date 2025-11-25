@@ -304,6 +304,7 @@
                                 >
                                     <option value="student" <?= $student['role'] === 'student' ? 'selected' : '' ?>>Student</option>
                                     <option value="admin" <?= $student['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
+                                    <option value="teacher" <?= $student['role'] === 'teacher' ? 'selected' : '' ?>>Teacher</option>
                                 </select>
                                 <div class="overlay-gradient absolute inset-0 rounded-xl pointer-events-none"></div>
                             </div>

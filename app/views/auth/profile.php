@@ -158,7 +158,7 @@
                 <div class="flex items-center space-x-4">
                     <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
                         <a href="<?= site_url('students') ?>" class="submit-btn px-4 py-2 rounded-lg font-medium shadow-lg">
-                            <i class="fas fa-users mr-2"></i>Manage Students
+                            <i class="fas fa-users mr-2"></i>Manage Accounts
                         </a>
                     <?php endif; ?>
                     
@@ -176,6 +176,32 @@
     </nav>
 
     <div class="max-w-4xl mx-auto py-8 px-4">
+        <!-- Back Navigation -->
+        <div class="mb-4">
+            <a href="<?php 
+                if (isset($_SESSION['role'])) {
+                    if ($_SESSION['role'] === 'admin') {
+                        echo site_url('admin/');
+                    } elseif ($_SESSION['role'] === 'teacher') {
+                        echo site_url('teacher/subjects');
+                    } else {
+                        echo site_url('student/dashboard');
+                    }
+                } else {
+                    echo site_url('');
+                }
+            ?>" class="inline-flex items-center text-blue-400 hover:text-blue-300 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                <span>Back to <?php 
+                    if (isset($_SESSION['role'])) {
+                        echo ucfirst($_SESSION['role']);
+                    } else {
+                        echo 'Home';
+                    }
+                ?> Dashboard</span>
+            </a>
+        </div>
+
         <div class="glassmorphism rounded-2xl shadow-xl p-8 fade-in">
             <div class="flex items-center justify-between mb-8">
                 <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
@@ -281,6 +307,33 @@
                             <i class="fas fa-at mr-2"></i>Username
                         </label>
                     </div>
+
+                    <?php if (isset($is_teacher) && $is_teacher): ?>
+                        <!-- Teacher-specific fields -->
+                        <div class="relative">
+                            <input type="text"
+                                   id="contact_number"
+                                   name="contact_number"
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-transparent focus:outline-none"
+                                   placeholder="Contact Number"
+                                   value="<?= htmlspecialchars($user['contact_number'] ?? '') ?>">
+                            <label for="contact_number" class="form-label absolute left-4 top-3 text-gray-300 pointer-events-none">
+                                <i class="fas fa-phone mr-2"></i>Contact Number
+                            </label>
+                        </div>
+
+                        <div class="relative">
+                            <input type="text"
+                                   id="specialization"
+                                   name="specialization"
+                                   class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-transparent focus:outline-none"
+                                   placeholder="Specialization"
+                                   value="<?= htmlspecialchars($user['specialization'] ?? '') ?>">
+                            <label for="specialization" class="form-label absolute left-4 top-3 text-gray-300 pointer-events-none">
+                                <i class="fas fa-graduation-cap mr-2"></i>Specialization
+                            </label>
+                        </div>
+                    <?php endif; ?>
 
                     <button type="submit" class="submit-btn w-full py-3 rounded-lg font-semibold text-white shadow-lg">
                         <i class="fas fa-save mr-2"></i>Update Profile
