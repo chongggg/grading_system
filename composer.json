@@ -1,21 +1,20 @@
 {
+    "name": "chongggg/grading-system",
+    "description": "Grading Management System",
+    "type": "project",
+    "license": "proprietary",
     "require": {
         "php": ">=7.4",
         "phpmailer/phpmailer": "^7.0",
         "tecnickcom/tcpdf": "^6.7",
         "phpoffice/phpspreadsheet": "^1.30"
     },
-    "scripts": {
-        "post-install-cmd": [
-            "[ -d app/vendor ] || cp -r vendor app/vendor"
-        ],
-        "post-update-cmd": [
-            "[ -d app/vendor ] || cp -r vendor app/vendor"
-        ]
-    },
     "config": {
         "vendor-dir": "vendor",
         "optimize-autoloader": true,
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "platform": {
+            "php": "7.4"
+        }
     }
 }
