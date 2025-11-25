@@ -2,6 +2,7 @@
     "require": {
         "phpmailer/phpmailer": "^7.0",
         "tecnickcom/tcpdf": "^6.7",
-        "phpoffice/phpspreadsheet": "^1.30"
+        "phpoffice/phpspreadsheet": "^1.30",
+        "sendgrid/sendgrid": "^8.0"
     }
 }
