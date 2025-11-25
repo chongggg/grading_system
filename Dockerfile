@@ -8,8 +8,12 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libcurl4-openssl-dev \
+    libgmp-dev \
+    libonig-dev \
+    libssl-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql gd zip \
+    && docker-php-ext-install pdo pdo_mysql gd zip curl mbstring gmp \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
