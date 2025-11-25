@@ -11,14 +11,18 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
     $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
     try {
-        // SMTP config
+        // SMTP config - Try port 587 with STARTTLS (more likely to work on hosting providers)
         $mail->isSMTP();
         $mail->Host       = 'smtp.gmail.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'chongmiranda21@gmail.com';
         $mail->Password   = 'ylhe ufic nuff vmtw';
-        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
-        $mail->Port       = 465;
+        $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+        
+        // Timeout settings for slow networks
+        $mail->Timeout    = 30;
+        $mail->SMTPKeepAlive = true;
         
         // Enable verbose debug output for troubleshooting
         $mail->SMTPDebug  = 0; // 0 = off, 2 = client and server messages
