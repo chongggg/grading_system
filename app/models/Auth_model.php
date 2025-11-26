@@ -418,9 +418,16 @@ class Auth_model extends Model
     /**
      * Subjects helper methods
      */
-    public function get_all_subjects()
+    public function get_all_subjects($filters = [])
     {
-        return $this->db->table('subjects')->get_all();
+        $query = $this->db->table('subjects');
+        if (!empty($filters['grade_level'])) {
+            $query = $query->where('grade_level', $filters['grade_level']);
+        }
+        if (!empty($filters['semester'])) {
+            $query = $query->where('semester', $filters['semester']);
+        }
+        return $query->get_all();
     }
 
     public function get_subject($id)

@@ -560,11 +560,16 @@ public function get_subjects_by_teacher($teacher_id)
     }
 
     // ======== SUBJECTS ========
-    public function getAllSubjects() {
-        return $this->db->table('subjects s')
-                       ->select('s.*, s.subject_name, s.subject_code')
-                       ->order_by('s.id', 'DESC')
-                       ->get_all();
+    public function getAllSubjects($filters = []) {
+        $query = $this->db->table('subjects s')
+            ->select('s.*, s.subject_name, s.subject_code');
+        if (!empty($filters['grade_level'])) {
+            $query = $query->where('s.grade_level', $filters['grade_level']);
+        }
+        if (!empty($filters['semester'])) {
+            $query = $query->where('s.semester', $filters['semester']);
+        }
+        return $query->order_by('s.id', 'DESC')->get_all();
     }
 
     public function get_available_subjects($student_id)

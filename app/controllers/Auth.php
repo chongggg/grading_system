@@ -761,8 +761,16 @@ class Auth extends Controller
             redirect('auth/login');
         }
 
+        $filters = [];
+        if (isset($_GET['grade_level']) && $_GET['grade_level'] !== '') {
+            $filters['grade_level'] = $_GET['grade_level'];
+        }
+        if (isset($_GET['semester']) && $_GET['semester'] !== '') {
+            $filters['semester'] = $_GET['semester'];
+        }
+
         $data['page'] = 'Subjects';
-        $data['subjects'] = $this->Auth_model->get_all_subjects();
+        $data['subjects'] = $this->Auth_model->get_all_subjects($filters);
         $this->call->view('admin/subjects', $data);
     }
 

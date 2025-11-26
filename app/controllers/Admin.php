@@ -530,7 +530,14 @@ public function teachers()
 
     // ========== SUBJECTS ==========
     public function subjects() {
-        $data['subjects'] = $this->Admin_model->getAllSubjects();
+        $filters = [];
+        if (isset($_GET['grade_level']) && $_GET['grade_level'] !== '') {
+            $filters['grade_level'] = $_GET['grade_level'];
+        }
+        if (isset($_GET['semester']) && $_GET['semester'] !== '') {
+            $filters['semester'] = $_GET['semester'];
+        }
+        $data['subjects'] = $this->Admin_model->getAllSubjects($filters);
         $data['teachers'] = $this->Admin_model->getAllTeachers(); // for dropdown
         $this->call->view('admin/subjects', $data);
     }
