@@ -18,7 +18,7 @@ function mail_helper($name, $email, $subject, $message, $attachmentPath = null)
             $sendgrid = new \SendGrid($sendgrid_api_key);
             
             $sendgrid_email = new \SendGrid\Mail\Mail();
-            $sendgrid_email->setFrom("noreply@grading-management-system.onrender.com", "Grading Management System");
+            $sendgrid_email->setFrom("chongmiranda21@gmail.com", "Grading Management System");
             $sendgrid_email->setSubject($subject);
             $sendgrid_email->addTo($email, $name);
             $sendgrid_email->addContent("text/html", $message);
